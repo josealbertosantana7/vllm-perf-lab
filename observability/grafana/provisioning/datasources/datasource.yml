@@ -1,0 +1,11 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus                  # fixed uid so the dashboard panels bind on import
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090      # service name when run via docker-compose
+    isDefault: true
+    editable: true
+# If you run Grafana via `brew services` instead of Docker, change the url above
+# to http://localhost:9090 (or set the datasource in the UI).

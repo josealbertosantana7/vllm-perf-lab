@@ -1,0 +1,89 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 1,
+  "title": "vLLM Inference Performance",
+  "uid": "vllm-perf-lab",
+  "version": 1,
+  "schemaVersion": 39,
+  "tags": ["vllm", "inference", "perf-lab"],
+  "time": { "from": "now-15m", "to": "now" },
+  "refresh": "5s",
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Requests running",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "expr": "vllm:num_requests_running", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" } } }
+    },
+    {
+      "type": "stat",
+      "title": "Requests waiting (queue)",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "expr": "vllm:num_requests_waiting", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "KV cache usage (paged attention)",
+      "description": "vllm:gpu_cache_usage_perc — fraction of KV-cache blocks in use. When this hits ~1.0, vLLM starts queueing/preempting.",
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "expr": "vllm:gpu_cache_usage_perc", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "min": 0, "max": 1, "unit": "percentunit" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Output throughput (tok/s)",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "legendFormat": "generation", "expr": "rate(vllm:generation_tokens_total[1m])", "datasource": { "type": "prometheus", "uid": "prometheus" } },
+        { "refId": "B", "legendFormat": "prompt", "expr": "rate(vllm:prompt_tokens_total[1m])", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "unit": "none", "custom": { "drawStyle": "line", "fillOpacity": 10 } } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Running vs waiting requests",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "legendFormat": "running", "expr": "vllm:num_requests_running", "datasource": { "type": "prometheus", "uid": "prometheus" } },
+        { "refId": "B", "legendFormat": "waiting", "expr": "vllm:num_requests_waiting", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 10 } } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Time to first token (TTFT) p50 / p99",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "legendFormat": "p50", "expr": "histogram_quantile(0.50, sum(rate(vllm:time_to_first_token_seconds_bucket[1m])) by (le))", "datasource": { "type": "prometheus", "uid": "prometheus" } },
+        { "refId": "B", "legendFormat": "p99", "expr": "histogram_quantile(0.99, sum(rate(vllm:time_to_first_token_seconds_bucket[1m])) by (le))", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Time per output token (TPOT) p50 / p99",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "legendFormat": "p50", "expr": "histogram_quantile(0.50, sum(rate(vllm:time_per_output_token_seconds_bucket[1m])) by (le))", "datasource": { "type": "prometheus", "uid": "prometheus" } },
+        { "refId": "B", "legendFormat": "p99", "expr": "histogram_quantile(0.99, sum(rate(vllm:time_per_output_token_seconds_bucket[1m])) by (le))", "datasource": { "type": "prometheus", "uid": "prometheus" } }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    }
+  ]
+}

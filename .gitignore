@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Env / secrets
+.env
+*.local.env
+
+# OS
+.DS_Store
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Large model / cache dirs (never commit weights)
+models/
+*.safetensors
+*.bin
+
+# Keep results/ committed (they are the portfolio), but ignore scratch
+results/scratch/
+*.tmp

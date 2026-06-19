@@ -1,0 +1,3 @@
+# Installed on the GPU plane (Kaggle / Colab / rented cloud) — NOT on the Mac.
+# vLLM pulls in a matching torch + triton build for CUDA.
+vllm>=0.6.0
