@@ -21,6 +21,9 @@ MODEL      = "Qwen/Qwen2.5-7B-Instruct"   # MoE run: "allenai/OLMoE-1B-7B-0924-I
 TP         = 2                             # tensor-parallel size: 2, or 1 for the baseline
 EXTRA_ARGS = []                            # e.g. ["--enable-expert-parallel"] or ["--enable-prefix-caching"]
 
+print("[0/4] stopping any previous vLLM/tunnel in this session (lets you re-run safely)...")
+subprocess.run("pkill -f 'vllm serve'; pkill -f cloudflared; sleep 3", shell=True)
+
 print("[1/4] installing vLLM (a few min; the red pip 'conflict' warnings are harmless)...")
 subprocess.run([sys.executable,"-m","pip","install","-q","vllm>=0.6.0"], check=True)
 
