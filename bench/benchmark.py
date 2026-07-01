@@ -128,13 +128,14 @@ async def run(args):
         print(f"  {k:18}: {v}")
 
     if args.output:
+        import os
+        os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
         with open(args.output, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(asdict(ok[0]).keys()))
             w.writeheader()
             for r in ok:
                 w.writerow(asdict(r))
         # append a one-line summary row to results/summary.csv for cross-run plots
-        import os
         summ_path = os.path.join(os.path.dirname(args.output) or ".", "summary.csv")
         new = not os.path.exists(summ_path)
         with open(summ_path, "a", newline="") as f:
